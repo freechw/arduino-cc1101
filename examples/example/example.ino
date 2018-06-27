@@ -41,6 +41,7 @@ void setup() {
     radio.disableAddressCheck();
     radio.setTxPowerAmp(PA_LongDistance);
 
+    Serial.begin(9600);
     Serial.print(F("CC1101_PARTNUM "));
     Serial.println(radio.readReg(CC1101_PARTNUM, CC1101_STATUS_REGISTER));
     Serial.print(F("CC1101_VERSION "));
@@ -103,7 +104,8 @@ void loop() {
         lastSend = now;
         const char *message = "hello world";
         CCPACKET packet;
-        packet.length = strlen(message);
+        // We also need to include the 0 byte at the end of the string
+        packet.length = strlen(message)  + 1;
         strncpy((char *) packet.data, message, packet.length);
 
         radio.sendData(packet);
